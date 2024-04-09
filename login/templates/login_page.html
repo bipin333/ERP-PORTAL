@@ -1,0 +1,90 @@
+{% extends 'main_template.html' %}
+
+{% block additionalCSS %}
+<style>
+#container{
+    margin: 5%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+#box{
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 400px;
+    width: 500px;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+#box > span{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+input, select {
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 0 10px;
+}
+button {
+    height: 40px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: all 0.3s;
+}
+button:hover{
+    background-color: green;
+    border: 1px solid black;
+    color: black;
+}
+input[type=checkbox] {
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+}
+</style>
+{% endblock %}
+
+{% block contents %}
+<form method="post">
+<div id="container">
+<div id="box">
+    {% csrf_token %}
+    <span><b>Fill Your Login Details</b></span>
+    <span>
+    <label for="username">Username : </label>
+    <input type="text" id="username" name="username" maxlength="20" required>
+    </span>
+    <span>
+    <label for="password">Password : </label>
+    <input type="password" id="password" name="password" maxlength="20" required>
+    </span>
+    <span><span><b>Remember Me Next Time : </b><input type="checkbox" value="false"></span></span>
+    <span>
+    <button type="submit">Login</button>
+    </span>
+    <span>
+    <button onclick='redirect_register(event)'>Register</button>
+    </span>
+</div>
+</div>
+</form>
+<script>
+    function redirect_register(event){
+        event.preventDefault();
+        window.location.href = "{% url 'register_page' %}"
+    }
+</script>
+{% endblock %}

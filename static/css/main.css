@@ -1,0 +1,21 @@
+body{
+    background-color: green;
+}
+#top_section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+#top_section > img {
+    height: 200px;
+    width: 200px;
+    margin-right: 10%;
+}
+#top_section > span {
+    font-family: monospace;
+    font-size: 50px;
+    font-weight: 1000;
+    max-width: 500px;
+    text-align: center;
+}

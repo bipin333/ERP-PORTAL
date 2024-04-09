@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <title>Rising School Login Portal</title>
+    {% block additionalCSS %}
+    {% endblock %}
+</head>
+<div id="top_section">
+    <img src="{% static 'img/logo.png' %}">
+    <span>RISING PUBLIC SCHOOL ERP PORTAL</span>
+</div>
+<body>
+    {% block contents %}
+    {% endblock %}
+</body>
+</html>
