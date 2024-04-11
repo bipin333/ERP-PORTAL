@@ -28,6 +28,8 @@ def register_page(request):
         name = request.POST['name']
         address = request.POST['address']
         phone_no = request.POST['phone']
+        gender = request.POST['gender']
+        sem = request.POST['sem']
         email = request.POST['mail']
         roll_no = request.POST['roll']
         course = request.POST['course']
@@ -46,7 +48,9 @@ def register_page(request):
             roll_no=roll_no,
             course=course,
             date_of_birth=date_of_birth,
-            image = imagee
+            image = imagee,
+            semester = sem,
+            gender = gender
         )
         user.save()
         stdnt.save()

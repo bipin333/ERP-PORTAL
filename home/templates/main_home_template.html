@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERP PORTAL</title>
+  <link rel="stylesheet" href="{% static 'css/main_home.css' %}">
+  <style>
+    #back{
+      background-image: url("{% static 'img/logo.png' %}");
+    }
+  </style>
+  {% block additionalCSS %}
+  {% endblock %}
+</head>
+<body>
+  <div id="nav_bar">
+    <div class="nav_item" onclick="location.href = '/'">Home</div>
+    <div class="nav_item" onclick="location.href = '/academic'">Academic Content</div>
+    <div class="nav_item" onclick="location.href = '/attendence'">Attendence</div>
+    <div class="nav_item" onclick="location.href = '/result'">Result</div>
+    <div class="user_icon" tabindex="1">
+      <img src="{% static 'img/profile.png' %}">
+      <div class="user_menu">
+        <div class="user_menu_item" onclick="location.href = '/profile'">Profile</div>
+        <div class="user_menu_item logout" onclick="location.href = '/log_out'">Logout</div>
+      </div>
+    </div>
+  </div>
+  <div id="back"></div>
+    {% block contents %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,59 @@
+{% extends 'main_home_template.html' %}
+
+{% block additionalCSS %}
+<style>
+    #container{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    #box {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background-color: aliceblue;
+        border: 5px solid black;
+    }
+
+    #stdnt_img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        align-items: center;
+        margin: 10px;
+    }
+
+    span {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block contents %}
+<h1 style="text-align: center;">Profile Details Of Account :</h1>
+<div id="container">
+    <div id="box">
+        <img id="stdnt_img" src="{{ img.url }}"></img>
+        <br>
+        <span>Name : {{ name }}</span>
+        <span>Email : {{ email }}</span>
+        <span>Phone No : {{ contact }}</span>
+        <span>Gender : {{ gender }}</span>
+        <span>Address : {{ address }}</span>
+        {% if not teacher %}
+        <span>Roll no : {{ roll }}</span>
+        <span>Course : {{ course }}</span>
+        <span>Semester : {{ sem }}</span>
+        {% else %}
+        <span>subjects : {{ subjects }}</span>
+        {% endif %}
+        <span>Date Of Birth : {{ dob }}</span>
+    </div>
+</div>
+{% endblock %}

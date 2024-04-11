@@ -46,6 +46,10 @@ button:hover{
     border: 1px solid black;
     color: black;
 }
+#box > span > span {
+    display: flex;
+    align-items: center;
+}
 </style>
 {% endblock %}
 
@@ -70,6 +74,16 @@ button:hover{
     <span>
     <label for="roll">Roll No : </label>
     <input type="text" id="roll" name="roll" maxlength="10" required>
+    </span>
+    <span>
+    <label for="sem">Semester : </label>
+    <input type="number" id="sem" name="sem" required>
+    </span>
+    <span>
+    <label for="gender">Gender : </label>
+    <span><input type="radio" id="male" name="gender" value="m" required> Male</span>
+    <span><input type="radio" id="female" name="gender" value="f" required>Female</span>
+    <span><input type="radio" id="others" name="gender" value="o" required>Others</span>
     </span>
     <span>
     <label for="address">Address : </label>
@@ -140,6 +154,12 @@ document.querySelector("form").addEventListener("submit", function(event) {
     var age = today.getFullYear() - dob.getFullYear();
     if (age < 18) {
         alert("You must be at least 18 years old to register.");
+        event.preventDefault();
+    }
+    //check sem in range 1 to 8
+    var sem = document.querySelector('#sem').value
+    if ( sem < 1 || sem > 8){
+        alert('Your sem should be in range 1 to 8')
         event.preventDefault();
     }
 });

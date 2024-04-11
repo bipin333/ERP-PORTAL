@@ -1,0 +1,9 @@
+{% extends 'main_home_template.html' %}
+
+{% block contents %}
+{% if not teacher %}
+<h1>Subjects: {% for subject in subjects %}{{ subject.name }}{% if not forloop.last %},{% endif %}{% endfor %}</h1>
+{% else %}
+
+{% endif %}
+{% endblock %}

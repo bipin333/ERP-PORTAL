@@ -54,6 +54,10 @@ input[type=checkbox] {
     width: 20px;
     margin-right: 10px;
 }
+#box > span > span {
+    display: flex;
+    align-items: center;
+}
 </style>
 {% endblock %}
 
@@ -71,7 +75,6 @@ input[type=checkbox] {
     <label for="password">Password : </label>
     <input type="password" id="password" name="password" maxlength="20" required>
     </span>
-    <span><span><b>Remember Me Next Time : </b><input type="checkbox" value="false"></span></span>
     <span>
     <button type="submit">Login</button>
     </span>

@@ -1,0 +1,75 @@
+#nav_bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #333;
+    color: white;
+}
+#back{
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 80vh;
+    width: 80vw;
+    position: absolute;
+    opacity: 0.3;
+    z-index: -3;
+}
+.nav_item {
+    margin: 0 15px;
+    cursor: pointer;
+}
+  
+.nav_item:hover {
+    color: white;
+}
+  
+.user_icon {
+    position: relative;
+    margin-right: 15px;
+    cursor: pointer;
+}
+  
+.user_icon img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+  
+.user_menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid grey;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    min-width: 120px;
+    padding: 8px;
+    z-index: 1;
+}
+  
+.user_menu .user_menu_item {
+    padding: 0.2rem 8px;
+    margin: 0 0.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+  
+.user_menu .user_menu_item:hover {
+    background-color: black;
+}
+.user_menu_item {
+    color: gray;
+}
+.user_menu .logout {
+    color: #f00;
+}
+  
+.user_icon:focus .user_menu,
+  .user_icon:focus-within .user_menu {
+    display: block;
+}

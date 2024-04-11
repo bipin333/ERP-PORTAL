@@ -1,0 +1,48 @@
+{% extends 'main_home_template.html' %}
+{% block additionalCSS %}
+<style>
+#box{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+#date{
+    margin: 10px;
+}
+#tble{
+    border: 3px solid black;
+    width: 50%;
+    height: 50%;
+    text-align: center;
+}
+</style>
+{% endblock %}
+{% block contents %}
+<div id="box">
+<form method="POST">
+    {% csrf_token %}
+    <input type="date" id="date" name="date">
+    <input type="submit" value="Fetch">
+</form>
+<table id="tble" border="1">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Present</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if processed %}
+            {% for subject, status in status %}
+                <tr>
+                    <td>{{ subject }}</td>
+                    <td>{% if status %}Yes{% else %}No{% endif %}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+<h1>{{date}}</h1>
+</div>
+{% endblock %}
