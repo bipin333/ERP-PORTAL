@@ -6,6 +6,7 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    margin: 20px;
 }
 #date{
     margin: 10px;
@@ -19,10 +20,11 @@
 </style>
 {% endblock %}
 {% block contents %}
+{% if student %}
 <div id="box">
 <form method="POST">
     {% csrf_token %}
-    <input type="date" id="date" name="date">
+    <input type="date" id="date" name="date" required>
     <input type="submit" value="Fetch">
 </form>
 <table id="tble" border="1">
@@ -45,4 +47,18 @@
 </table>
 <h1>{{date}}</h1>
 </div>
+{% else %}
+<div id="box">
+<form method="post">
+{% csrf_token %}
+<select name="subject" required>
+<option value="">Subject</option>
+{% for sub in subject %}
+<option value="{{ sub.name }}">{{ sub.name }}</option>
+{% endfor %}
+</select>
+<input type="submit">
+</form>
+</div>
+{% endif %}
 {% endblock %}

@@ -5,6 +5,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 #Note all null=True are only for testing purpose
 class Files(models.Model):
     file = models.FileField(upload_to='study_materials')
+    name = models.CharField(max_length=20, null=True)
+    def __str__(self):
+        return self.name
 class student(models.Model):
     username = models.CharField(max_length=20, primary_key=True)
     password = models.CharField(max_length=20, null=True)
@@ -30,7 +33,7 @@ class student(models.Model):
         return self.name
 
 class Subject(models.Model):
-    name = models.CharField(max_length=30, null=True)
+    name = models.CharField(max_length=30, unique=True)
     course = models.CharField(max_length=20, choices=student.COURSE_CHOICES, null=True)
     semester = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(8)], null=True

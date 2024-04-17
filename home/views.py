@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from login.models import student, teacher, Subject, Attendance
+from login.models import student, teacher, Subject, Attendance, Files
 from django.http import HttpResponse
 from django.contrib.auth import logout
 # Create your views here.
@@ -54,15 +54,25 @@ def academic(request):
         }
         return render(request, 'academic.html', context)
     else:
-        try:
-            tech = teacher.objects.get(username=request.user.username)
-        except:
-            return HttpResponse('<h1>This staff acount dont have associated subjects</h1>')
-        context={
-            'teacher': True,
-            'subjects': tech.subjects
-        }
-        return render(request, 'academic.html', context)
+        if request.method == 'POST':
+            file = request.FILES['file']
+            subject = request.POST['subject']
+            name = request.POST['name']
+            file_new = Files.objects.create(name=name, file=file)
+            file_new.save()
+            sub = Subject.objects.get(name=subject)
+            sub.materials.add(file_new)
+            return HttpResponse('Sucess')
+        else:
+            try:
+                tech = teacher.objects.get(username=request.user.username)
+            except:
+                return HttpResponse('<h1>This staff acount dont have associated subjects</h1>')
+            context={
+                'teacher': True,
+                'subjects': tech.subjects.all()
+            }
+            return render(request, 'academic.html', context)
 @login_required
 def attendence(request):
     if not request.user.is_staff:
@@ -78,11 +88,16 @@ def attendence(request):
                 'date': date,
                 'status': statuss,
                 'processed': True,
+                'student': True,
             }
             return render(request, 'attendence.html', context)
-                
         return render(request, 'attendence.html')
-
+    else:
+        tech = teacher.objects.get(username=request.user.username)
+        context = {
+            'subject' : tech.subjects.all
+        }
+        return render(request, 'attendence.html', context)
 @login_required
 def log_out(request):
     logout(request)

@@ -1,9 +1,82 @@
 {% extends 'main_home_template.html' %}
-
+{% block additionalCSS %}
+<style>
+    #box{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+    }
+    .sub{
+        width: 300px;
+        text-align: center;
+        background-color: yellow;
+        border: 2px solid black;
+        margin: 3px;
+        cursor: pointer;
+    }
+    .file-list{
+        display: none;
+        margin: 10px;
+    }
+    .file-list.active{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+    }
+    .file-input-container{
+        display: none;
+    }
+    .file-input-container.active{
+        display: block;
+    }
+</style>
+{% endblock %}
 {% block contents %}
-{% if not teacher %}
-<h1>Subjects: {% for subject in subjects %}{{ subject.name }}{% if not forloop.last %},{% endif %}{% endfor %}</h1>
-{% else %}
 
+{% if not teacher %}
+<div id="box">
+    {% for subject in subjects %}
+    <div class="sub" onclick="toggleFiles('{{ subject.name }}')">{{ subject.name }}</div>
+    <div id="{{ subject.name }}-files" class="file-list">
+        {% for file in subject.materials.all %}
+        <a href="{{ file.file.url }}" download>{{ file.name }}</a>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div id="box">
+    {% for subject in subjects %}
+    <div class="sub" onclick="toggleFiles('{{ subject.name }}')">{{ subject.name }}</div>
+    <div id="{{ subject.name }}-files" class="file-list">
+        {% for file in subject.materials.all %}
+        <a href="{{ file.file.url }}" style="background-color: antiquewhite; margin: 5px;" download>{{ file.name }}</a>
+        {% endfor %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" required onchange="toggleFileNameInput('{{ subject.name }}')">
+            <input type="text" name="subject" value="{{ subject.name }}" hidden> 
+            <div class="file-input-container" id="{{ subject.name }}-file-input-container">
+                <input type="text" name="name" required>
+                <button type="submit">Upload</button>
+            </div>
+        </form>
+    </div>
+    {% endfor %}
+</div>
 {% endif %}
+
+<script>
+    function toggleFiles(subjectName) {
+        const files = document.getElementById(subjectName + "-files");
+        files.classList.toggle("active");
+    }
+    function toggleFileNameInput(subjectName) {
+        const fileInputContainer = document.getElementById(subjectName + "-file-input-container");
+        fileInputContainer.classList.toggle("active");
+    }
+</script>
 {% endblock %}
