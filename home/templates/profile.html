@@ -51,7 +51,7 @@
         <span>Course : {{ course }}</span>
         <span>Semester : {{ sem }}</span>
         {% else %}
-        <span>subjects : {{ subjects }}</span>
+        <span>subjects : {% for sub in subjects.all %}{{ sub }} {% endfor %}</span>
         {% endif %}
         <span>Date Of Birth : {{ dob }}</span>
     </div>

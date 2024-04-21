@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from login.models import student, teacher, Subject, Attendance, Files
 from django.http import HttpResponse
 from django.contrib.auth import logout
+import datetime
 # Create your views here.
 @login_required
 def home(request):
@@ -94,10 +95,47 @@ def attendence(request):
         return render(request, 'attendence.html')
     else:
         tech = teacher.objects.get(username=request.user.username)
-        context = {
-            'subject' : tech.subjects.all
-        }
-        return render(request, 'attendence.html', context)
+        subjects_all = tech.subjects.all()
+        if request.method == 'POST':
+            if 'subject-select' in request.POST:
+                sub = request.POST['sub']
+                sem = Subject.objects.filter(name=sub)
+                sem = sem[0].semester
+                students_all = student.objects.filter(semester=sem).order_by('roll_no')
+                subject = Subject.objects.filter(name=sub)
+                subject = subject[0]
+                attendence_already_present = Attendance.objects.filter(subject=subject,date=datetime.date.today())
+                if attendence_already_present:
+                    return HttpResponse('Attendence for today already upladed')
+                else:
+                    context = {
+                        'subject' : sub,
+                        'students': students_all,
+                        'loaded': True,
+                        'semester': sem,
+                    }
+                    return render(request, 'attendence.html', context)
+            elif 'attendence-submit' in request.POST:
+                roll_numbers = request.POST.getlist('roll_no')
+                semester = request.POST['semester']
+                subject = request.POST['subject']
+                subject = Subject.objects.filter(name=subject)
+                for roll in roll_numbers:
+                    status = request.POST.get(roll) == 'on'
+                    at = Attendance(
+                        roll_no=roll,
+                        subject=subject[0],
+                        date = datetime.date.today(),
+                        semester = semester,
+                        status = status
+                    )
+                    at.save()
+                return HttpResponse('attendence send to server')
+        else:
+            context = {
+                'subject' : subjects_all
+            }
+            return render(request, 'attendence.html', context)
 @login_required
 def log_out(request):
     logout(request)

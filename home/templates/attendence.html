@@ -49,16 +49,41 @@
 </div>
 {% else %}
 <div id="box">
-<form method="post">
+<form method="POST">
 {% csrf_token %}
-<select name="subject" required>
+<select name="sub" required>
 <option value="">Subject</option>
 {% for sub in subject %}
 <option value="{{ sub.name }}">{{ sub.name }}</option>
 {% endfor %}
 </select>
-<input type="submit">
+<input type="submit" value="submit" name="subject-select">
 </form>
+{% if loaded %}
+<form method="POST">
+{% csrf_token %}
+<table id="tble" border="1">
+    <thead>
+        <tr>
+            <th>Roll</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+            <tr>
+                <td>{{ student.roll_no }}</td>
+                <td><input type="checkbox" name="{{ student.roll_no }}" checked></td>
+            </tr>
+            <input type="text" name="roll_no" value="{{ student.roll_no }}" hidden>
+        {% endfor %}
+    </tbody>
+</table>
+<input type="text" value="{{ subject }}" name="subject" hidden>
+<input type="text" value="{{ semester }}" name="semester" hidden>
+<input type="submit" value="submit" name="attendence-submit">
+</form>
+{% endif %}
 </div>
 {% endif %}
 {% endblock %}

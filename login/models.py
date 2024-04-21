@@ -52,7 +52,7 @@ class Attendance(models.Model):
     )
 
     def __str__(self):
-        return self.roll_no
+        return self.roll_no + ' ' + self.subject.name + ' ' + self.date.isoformat()
 
 class teacher(models.Model):
     username = models.CharField(max_length=20, primary_key=True)
@@ -68,3 +68,29 @@ class teacher(models.Model):
 
     def __str__(self):
         return self.name
+
+class Mark(models.Model):
+    student = models.ForeignKey(student, on_delete=models.CASCADE, null=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True)
+    mark = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    def save(self, *args, **kwargs):
+        if not Result.objects.filter(student=self.student, semester=self.subject.semester).exists():
+            r = Result(student=self.student, semester=self.subject.semester)
+            r.save()
+            r.marks.add(self)
+            r.save()
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return f'{self.subject.name} - {self.mark}'
+    
+class Result(models.Model):
+    student = models.ForeignKey(student, on_delete=models.CASCADE, null=True)
+    marks = models.ManyToManyField(Mark, related_name='results', blank=True)
+    semester = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(8)], null=True
+    )
+    def save(self, *args, **kwargs):
+        marks_associated = Mark.objects.filter(student=self.student, subject__semester=self.semester)
+        if marks_associated:
+            self.marks.add(marks_associated)
+        super().save(*args, **kwargs)
