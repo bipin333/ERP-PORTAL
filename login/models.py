@@ -73,24 +73,17 @@ class Mark(models.Model):
     student = models.ForeignKey(student, on_delete=models.CASCADE, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True)
     mark = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    def save(self, *args, **kwargs):
-        if not Result.objects.filter(student=self.student, semester=self.subject.semester).exists():
-            r = Result(student=self.student, semester=self.subject.semester)
-            r.save()
-            r.marks.add(self)
-            r.save()
-        super().save(*args, **kwargs)
+    session = models.CharField(max_length=10, choices=[('mst-1', 'sessional 2'), ('mst-2', 'sessional 1'), ('final', 'Final')],null=True)
     def __str__(self):
-        return f'{self.subject.name} - {self.mark}'
-    
-class Result(models.Model):
-    student = models.ForeignKey(student, on_delete=models.CASCADE, null=True)
-    marks = models.ManyToManyField(Mark, related_name='results', blank=True)
-    semester = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(8)], null=True
-    )
-    def save(self, *args, **kwargs):
-        marks_associated = Mark.objects.filter(student=self.student, subject__semester=self.semester)
-        if marks_associated:
-            self.marks.add(marks_associated)
-        super().save(*args, **kwargs)
+        return f'{self.student.name} - {self.subject.name} - {self.mark}'
+    class Meta:
+        unique_together = (('student', 'subject', 'session'),)
+    @staticmethod
+    def get_percentage(stdnt, session):
+        all_marks = Mark.objects.filter(student=stdnt, session=session)
+        total_marks = 0
+        for mark in all_marks:
+            total_marks += mark.mark
+        if not all_marks or total_marks == 0:
+            return 0
+        return round((total_marks / (len(all_marks)*100)) * 100, 2)

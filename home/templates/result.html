@@ -1,0 +1,79 @@
+{% extends 'main_home_template.html' %}
+{% block contents %}
+{% if teacher %}
+
+{% if step1 %}
+<form method="POST">
+{% csrf_token %}
+<select name="subject" required>
+<option value="">select subject</option>
+{% for sub in subjects %}
+<option value="{{ sub }}">{{sub}}</option>
+{% endfor %}
+</select>
+<input type="submit" name="step-1">
+</form>
+{% endif %}
+
+{% if step2 %}
+<form method="POST">
+{% csrf_token %}
+<h1>{{ subject }}</h1>
+<table id="tble" border="1">
+    <thead>
+        <tr>
+            <th>Roll</th>
+            <th>Marks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+            <tr>
+                <td>{{ student.roll_no }}</td>
+                <td><input type="number" name="{{ student.roll_no }}" max="100" min="0"></td>
+            </tr>
+            <input type="text" name="roll_no" value="{{ student.roll_no }}" hidden>
+        {% endfor %}
+    </tbody>
+</table>
+<input type="text" value="{{ subject }}" name="subject" hidden><br>
+sessional 1 <input type="radio" name="session" value="mst-1"><br>
+sessional 2 <input type="radio" name="session" value="mst-2"><br>
+final <input type="radio" name="session" value="final"><br>
+<input type="submit" name="step-2">
+</form>
+{% endif %}
+
+{% else %}
+<form method="POST">
+{% csrf_token %}
+<select name="session" required>
+    <option value="">Examination</option>
+    <option value="mst-1">sessional 1</option>
+    <option value="mst-2">sessional 2</option>
+    <option value="final">final</option>
+</select>
+<input type="submit">
+</form>
+<table id="tble" border="1">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Marks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mark in data %}
+            <tr>
+                <td>{{ mark.subject.name }}</td>
+                <td>{{ mark.mark }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>PERCENTAGE</td>
+            <td>{{ percentage }}%</td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

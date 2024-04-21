@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from login.models import student, teacher, Subject, Attendance, Files
+from login.models import student, teacher, Subject, Attendance, Files, Mark
 from django.http import HttpResponse
 from django.contrib.auth import logout
 import datetime
@@ -136,6 +136,57 @@ def attendence(request):
                 'subject' : subjects_all
             }
             return render(request, 'attendence.html', context)
+@login_required
+def result(request):
+    if not request.user.is_staff:
+        if request.method == 'POST':
+            session = request.POST['session']
+            stdnt = student.objects.filter(username=request.user.username)
+            marks = Mark.objects.filter(student=stdnt[0],session=session)
+            context={
+                'data':marks,
+                'percentage': Mark.get_percentage(stdnt[0],session),
+            }
+            return render(request, 'result.html', context)
+        return render(request, 'result.html')
+    else:
+        tech = teacher.objects.get(username=request.user.username)
+        if request.method == 'POST':
+            if 'step-1' in request.POST:
+                sub = request.POST['subject']
+                subject = Subject.objects.filter(name=sub)
+                sem = subject[0].semester
+                student_all = student.objects.filter(semester=sem)
+                context = {
+                    'students': student_all.all(),
+                    'subject':sub,
+                    'step2': True,
+                    'teacher': True,
+                }
+                return render(request, 'result.html', context)
+            elif 'step-2' in request.POST:
+                sub = request.POST['subject']
+                session = request.POST['session']
+                subject = Subject.objects.filter(name=sub)
+                students = request.POST.getlist('roll_no')
+                for stdnt in students:
+                    mrk = request.POST.get(stdnt)
+                    stdnt_object = student.objects.filter(roll_no=stdnt)
+                    mt = Mark(
+                        student=stdnt_object[0],
+                        subject=subject[0],
+                        mark=mrk,
+                        session = session
+                    )
+                    mt.save()
+                return HttpResponse('marks uploaded')
+                    
+        context = {
+            'subjects': tech.subjects.all(),
+            'teacher': True,
+            'step1': True,
+        }
+        return render(request,'result.html',context)
 @login_required
 def log_out(request):
     logout(request)
