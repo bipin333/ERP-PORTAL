@@ -1,8 +1,31 @@
 {% extends 'main_home_template.html' %}
+
+{% block additionalCSS %}
+<style>
+#box{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+#tble{
+    border: 3px solid black;
+    width: 50%;
+    height: 50%;
+    text-align: center;
+}
+th{
+    color: red;
+}
+</style>
+{% endblock %}
+
 {% block contents %}
 {% if teacher %}
 
 {% if step1 %}
+<div id="box">
 <form method="POST">
 {% csrf_token %}
 <select name="subject" required>
@@ -13,9 +36,11 @@
 </select>
 <input type="submit" name="step-1">
 </form>
+</div>
 {% endif %}
 
 {% if step2 %}
+<div id="box">
 <form method="POST">
 {% csrf_token %}
 <h1>{{ subject }}</h1>
@@ -42,9 +67,11 @@ sessional 2 <input type="radio" name="session" value="mst-2"><br>
 final <input type="radio" name="session" value="final"><br>
 <input type="submit" name="step-2">
 </form>
+</div>
 {% endif %}
 
 {% else %}
+<div id="box">
 <form method="POST">
 {% csrf_token %}
 <select name="session" required>
@@ -69,11 +96,12 @@ final <input type="radio" name="session" value="final"><br>
                 <td>{{ mark.mark }}</td>
             </tr>
         {% endfor %}
-        <tr>
+        <tr style="background-color: lightgreen;">
             <td>PERCENTAGE</td>
             <td>{{ percentage }}%</td>
         </tr>
     </tbody>
 </table>
+</div>
 {% endif %}
 {% endblock %}

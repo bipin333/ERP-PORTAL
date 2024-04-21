@@ -92,7 +92,10 @@ def attendence(request):
                 'student': True,
             }
             return render(request, 'attendence.html', context)
-        return render(request, 'attendence.html')
+        context = {
+            'student': True
+        }
+        return render(request, 'attendence.html',context)
     else:
         tech = teacher.objects.get(username=request.user.username)
         subjects_all = tech.subjects.all()
