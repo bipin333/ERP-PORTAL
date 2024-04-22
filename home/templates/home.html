@@ -1,4 +1,60 @@
 {% extends 'main_home_template.html' %}
+
+{% block additionalCSS %}
+<style>
+  .notices {
+    float: right;
+    width: 30%;
+    padding: 20px;
+    border: 1px solid #00ff73;
+    border-radius: 5px;
+    margin: 10px;
+  }
+  
+  .notice-heading {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .notice {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: lightgreen;
+    position: relative;
+  }
+  
+  .notice small {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 12px;
+    color: #888;
+  }
+</style>
+{% endblock %}
+
 {% block contents %}
-<h1>This fucking works</h1>
+  {% if user.is_staff %}
+    <form method="post" style="align-items: center;">
+      {% csrf_token %}
+      <textarea type="text" name="notice" rows="5" style="margin: 10px;" placeholder="Enter notice here..."></textarea><br>
+      <button type="submit">Post Notice</button>
+    </form>
+  {% endif %}
+  <div class="notices">
+    <div class="notice-heading">
+      <h2>Notices</h2>
+    </div>
+    {% for notice in notices %}
+      <div class="notice">
+        <p>{{ notice.notice_text }}</p>
+        <small>{{ notice.created_at }}</small>
+      </div>
+    {% empty %}
+      <p>No notices yet.</p>
+    {% endfor %}
+  </div>
+  <div class="main-content">
+    <h1>Welcome to Public School login portal </h1>
+  </div>
 {% endblock %}

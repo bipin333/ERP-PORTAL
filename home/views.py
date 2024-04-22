@@ -1,18 +1,23 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from login.models import student, teacher, Subject, Attendance, Files, Mark
+from login.models import student, teacher, Subject, Attendance, Mark, Files
 from django.http import HttpResponse
 from django.contrib.auth import logout
 import datetime
+from .models import Notice
 # Create your views here.
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    if request.method == 'POST':
+        notice_text = request.POST['notice']
+        Notice.objects.create(notice_text=notice_text, created_at=datetime.date.today())
+    notices = Notice.objects.all()
+    return render(request, 'home.html', {'notices': notices})
 @login_required
 def profile(request):
     if not request.user.is_staff:
-        stdnt = student.objects.get(username=request.user.username)
+        stdnt = student.objects.raw('SELECT * FROM login_student WHERE username = %s', [request.user.username])[0]
         context = {
             'name': stdnt.name,
             'address': stdnt.address,
@@ -29,7 +34,7 @@ def profile(request):
         return render(request, 'profile.html', context)
     else:
         try:
-            tech = teacher.objects.get(username=request.user.username)
+            tech = teacher.objects.raw('SELECT * FROM login_teacher WHERE username = %s', [request.user.username])[0]
         except:
             return HttpResponse('<h3>current staff account dont have teacher profile </h3><h4>Ask administrator for teacher account</h4>')
         context = {
@@ -47,8 +52,8 @@ def profile(request):
 @login_required
 def academic(request):
     if not request.user.is_staff:
-        stdnt = student.objects.get(username=request.user.username)
-        subjects = Subject.objects.filter(course=stdnt.course, semester=stdnt.semester)
+        stdnt = student.objects.raw('SELECT * FROM login_student WHERE username = %s', [request.user.username])[0]
+        subjects = Subject.objects.raw('SELECT * FROM login_subject WHERE course = %s AND semester = %s', [stdnt.course, stdnt.semester])
         context = {
             'course': stdnt.course,
             'subjects': subjects
@@ -61,12 +66,12 @@ def academic(request):
             name = request.POST['name']
             file_new = Files.objects.create(name=name, file=file)
             file_new.save()
-            sub = Subject.objects.get(name=subject)
+            sub = Subject.objects.raw('SELECT * FROM login_subject WHERE name = %s', [subject])[0]
             sub.materials.add(file_new)
             return HttpResponse('Sucess')
         else:
             try:
-                tech = teacher.objects.get(username=request.user.username)
+                tech = teacher.objects.raw('SELECT * FROM login_teacher WHERE username = %s', [request.user.username])[0]
             except:
                 return HttpResponse('<h1>This staff acount dont have associated subjects</h1>')
             context={
@@ -79,7 +84,7 @@ def attendence(request):
     if not request.user.is_staff:
         if request.method == 'POST':
             date = request.POST['date']
-            stdnt = student.objects.get(username=request.user.username)
+            stdnt = student.objects.raw('SELECT * FROM login_student WHERE username = %s', [request.user.username])[0]
             subjects_all = Subject.objects.filter(course=stdnt.course, semester=stdnt.semester)
             statuss =[]
             for i in subjects_all:
@@ -144,16 +149,16 @@ def result(request):
     if not request.user.is_staff:
         if request.method == 'POST':
             session = request.POST['session']
-            stdnt = student.objects.filter(username=request.user.username)
-            marks = Mark.objects.filter(student=stdnt[0],session=session)
+            stdnt = student.objects.raw('SELECT * FROM login_student WHERE username = %s', [request.user.username])[0]
+            marks = Mark.objects.filter(student=stdnt,session=session)
             context={
                 'data':marks,
-                'percentage': Mark.get_percentage(stdnt[0],session),
+                'percentage': Mark.get_percentage(stdnt,session),
             }
             return render(request, 'result.html', context)
         return render(request, 'result.html')
     else:
-        tech = teacher.objects.get(username=request.user.username)
+        tech = teacher.objects.raw('SELECT * FROM login_teacher where username=%s',[request.user.username])[0]
         if request.method == 'POST':
             if 'step-1' in request.POST:
                 sub = request.POST['subject']
@@ -170,14 +175,14 @@ def result(request):
             elif 'step-2' in request.POST:
                 sub = request.POST['subject']
                 session = request.POST['session']
-                subject = Subject.objects.filter(name=sub)
+                subject = Subject.objects.raw('SELECT * FROM login_subject where name = %s',[sub])[0]
                 students = request.POST.getlist('roll_no')
                 for stdnt in students:
                     mrk = request.POST.get(stdnt)
-                    stdnt_object = student.objects.filter(roll_no=stdnt)
+                    stdnt_object = student.objects.raw('SELECT * FROM login_student where roll_no=%s',[stdnt])[0]
                     mt = Mark(
-                        student=stdnt_object[0],
-                        subject=subject[0],
+                        student=stdnt_object,
+                        subject=subject,
                         mark=mrk,
                         session = session
                     )
